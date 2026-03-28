@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
   });
 });
 
-app.use("/todos", taskRoutes);
+app.use("/tasks", taskRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
