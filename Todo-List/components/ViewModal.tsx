@@ -69,15 +69,15 @@ export default function ViewModal(props: ModalViewProps) {
           <Chip 
             icon={task?.completed ? "check-circle" : "clock-outline"}
             selectedColor={task?.completed ? "green" : "orange"}
-            style={{ backgroundColor: task?.completed ? "#e8f5e9" : "#fff3e0" }}
+            style={{ backgroundColor: task?.completed ? "#c6fbca" : "#fee6bf" }}
           >
             {task?.completed ? "Completada" : "En Proceso..."}
           </Chip>
         </View>
 
         <View style={{ alignItems: 'flex-end' }}>
-          <Button 
-            mode="contained-tonal" 
+          <Button  
+          mode="contained"
             onPress={props.newState}
           >
             Cerrar
