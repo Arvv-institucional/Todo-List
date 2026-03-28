@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {View, Pressable, StyleSheet, ActivityIndicator} from "react-native"
+import {View} from "react-native"
 import { Modal, Portal, Text, Button, Surface, Divider, Chip } from 'react-native-paper';
 
 interface Task {

@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from "react";
-import {View, Pressable, StyleSheet} from "react-native"
-import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
+import {View} from "react-native"
 import { Modal, Portal, TextInput, Button, Text, Surface } from 'react-native-paper';
 
 interface Task {
