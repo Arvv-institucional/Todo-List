@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from "react";
-import {Modal, View, Text, Pressable, StyleSheet, TextInput} from "react-native"
+import {View, Pressable, StyleSheet} from "react-native"
 import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
+import { Modal, Portal, TextInput, Button, Text, Surface } from 'react-native-paper';
 
 interface Task {
   'title' : string
@@ -77,118 +78,58 @@ export default function EditModal(props: ModalViewProps) {
 
 
   return(
-    <SafeAreaProvider>
-      <SafeAreaView style={styles.centeredView}>
-        <Modal visible={props.isVisibleEdit} style={styles.modalView} 
-        animationType="slide" transparent = {true}>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}> title: </Text>
-              <TextInput placeholder={task?.title} value={newTitle} onChangeText={setNewTitle}
-              />
-              <Text style={styles.textStyle}> </Text>
-              <Text style={styles.modalText}> Description: </Text>
-              <TextInput placeholder={task?.description} value={newDescription} onChangeText={setNewDescription}
-              />
-              <Text style={styles.textStyle}> </Text>
-              <Pressable onPress={editTaskOnPress} style={styles.buttonSave}>
-                <Text style={styles.textStyle}> Guardar </Text>
-              </Pressable>
-              <Text style={styles.textStyle}> </Text>
-              <Pressable onPress={props.newState} style={styles.buttonClose}>
-                <Text style={styles.textStyle}> salir </Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal>
-      </SafeAreaView>
-    </SafeAreaProvider>
-    
-  )
+  <Portal> 
+    <Modal 
+      visible={props.isVisibleEdit} 
+      onDismiss={props.newState} 
+      contentContainerStyle={{ padding: 20 }}
+    >
+      <Surface style={{ padding: 20, borderRadius: 12, backgroundColor: 'white' }} elevation={5}>
+        <Text variant="headlineSmall" style={{ marginBottom: 20, fontWeight: 'bold' }}>
+          Editar Tarea
+        </Text>
+
+        <TextInput
+          label="Título"
+          mode="outlined"
+          contentStyle={{ paddingHorizontal: 10 }}
+          placeholder={task?.title}
+          value={newTitle}
+          onChangeText={setNewTitle}
+          style={{height: 55, marginBottom: 15, backgroundColor: 'white' }}
+        />
+
+        <TextInput
+          label="Descripción"
+          mode="outlined"
+          contentStyle={{ paddingHorizontal: 10 }}
+          placeholder={task?.description}
+          value={newDescription}
+          onChangeText={setNewDescription}
+          multiline
+          numberOfLines={3}
+          style={{height: 55, marginBottom: 25, backgroundColor: 'white' }}
+        />
+
+        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 10 }}>
+          <Button 
+            mode="text" 
+            onPress={props.newState}
+            textColor="gray"
+          >
+            Cancelar
+          </Button>
+          
+          <Button 
+            mode="contained" 
+            onPress={editTaskOnPress}
+            icon="content-save"
+          >
+            Guardar
+          </Button>
+        </View>
+      </Surface>
+    </Modal>
+  </Portal>
+);
 }
-
-const styles = StyleSheet.create({
-  centeredView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)'
-  },
-
-  modalView: {
-    width: '85%',
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 15,
-    padding: 40,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-
-  textTitle : {
-    fontSize : 20,
-    fontWeight : 'bold',
-    color : 'black'
-  },
-
-  buttonSave: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-    backgroundColor: '#2196F3',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-    buttonClose: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-    backgroundColor: '#f45454',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'left',
-  },
-  separator: {
-    height: 1,
-    backgroundColor: '#EEEEEE',
-    width: '100%',
-    marginVertical: 5,
-  },
-  badgeContainer: {
-    paddingVertical: 4,
-    paddingHorizontal: 12,
-    borderRadius: 20,
-    marginBottom: 20,
-  },
-  badgeProceso: {
-    backgroundColor: '#FFF4E5',
-  },
-  textProceso: {
-    color: '#B76E00',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  badgeCompletada: {
-    backgroundColor: '#E8F5E9', 
-  },
-  textCompletada: {
-    color: '#2E7D32', 
-    fontSize: 14,
-    fontWeight: 'bold',
-  }
-})
