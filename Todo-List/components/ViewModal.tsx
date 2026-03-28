@@ -3,19 +3,18 @@ import {Modal, View, Text, Pressable, StyleSheet, ActivityIndicator} from "react
 import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 
 interface Task {
-  "title": String,
-  "description": String,
+  "title": string,
+  "description": string,
   "completed": boolean
 }
 
+interface ModalViewProps {
+  id:number, 
+  isVisibleView: boolean,
+  newState: () => void
+}
 
 const url = "http://localhost:3000/tasks/"
-
-interface ModalViewProps{
-id:number, 
-isVisible: boolean,
-newState: () => void
-}
 
 export default function ViewModal(props: ModalViewProps) {
 
@@ -34,18 +33,18 @@ export default function ViewModal(props: ModalViewProps) {
         "description": "Ha habido un problema en la tarea intentelo mas tarde",
         "completed": false
       }
-    setTask(wantedTaskError)
+      setTask(wantedTaskError)
     }
   }
 
   useEffect(()=>{
     fetchTask()
-  }, [props.id])
+  }, [props.id, props.isVisibleView])
   
   return(
     <SafeAreaProvider>
       <SafeAreaView style={styles.centeredView}>
-        <Modal visible={props.isVisible} style={styles.modalView} 
+        <Modal visible={props.isVisibleView} style={styles.modalView} 
         animationType="slide" transparent = {true}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
