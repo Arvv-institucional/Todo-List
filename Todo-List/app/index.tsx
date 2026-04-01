@@ -1,15 +1,17 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, SafeAreaView,StyleSheet,Text} from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+} from "react-native";
 
 import EditModal from "@/components/EditModal";
 import TareaCard from "@/components/TareaCard";
 import ViewModal from "@/components/ViewModal";
 
-import {
-  deleteTarea,
-  getTareas,
-  type Tarea,
-} from "@/services/taskService";
+import { deleteTarea, getTareas, type Tarea } from "@/services/taskService";
 
 export default function Index() {
   // --- Estado de datos ---
@@ -39,8 +41,8 @@ export default function Index() {
       setError(null);
       const data = await getTareas();
       setTareas(data);
-    } catch (e: any) {
-      setError(e.message ?? "Error desconocido");
+    } catch (error: any) {
+      setError(error.message ?? "Error desconocido");
     } finally {
       setLoading(false);
     }
@@ -51,16 +53,16 @@ export default function Index() {
   }, [fetchTareas]);
 
   // --- Borrar tarea ---
- const handleDelete = async (id: number, nombre: string) => {
-  const confirmed = window.confirm(`¿Deseas eliminar "${nombre}"?`);
-  if (!confirmed) return;
-  try {
-    await deleteTarea(id);
-    setTareas((prev) => prev.filter((t) => t.id !== id));
-  } catch (e: any) {
-    window.alert(`Error al eliminar: ${e.message}`);
-  }
-};
+  const handleDelete = async (id: number, nombre: string) => {
+    const confirmed = window.confirm(`¿Deseas eliminar "${nombre}"?`);
+    if (!confirmed) return;
+    try {
+      await deleteTarea(id);
+      setTareas((prev) => prev.filter((t) => t.id !== id));
+    } catch (e: any) {
+      window.alert(`Error al eliminar: ${e.message}`);
+    }
+  };
 
   // --- Refrescar lista después de editar ---
   const handleEditClose = () => {
@@ -69,7 +71,8 @@ export default function Index() {
   };
 
   // --- Helpers de visualización ---
-  const getEstado = (completed: boolean) => (completed ? "Completado" : "Pendiente");
+  const getEstado = (completed: boolean) =>
+    completed ? "Completado" : "Pendiente";
 
   // --- Render ---
   if (loading) {
