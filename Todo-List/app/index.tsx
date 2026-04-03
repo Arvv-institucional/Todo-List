@@ -1,178 +1,84 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, SafeAreaView,StyleSheet,Text} from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, ScrollView, StyleSheet } from "react-native";
+import { FAB, Provider as PaperProvider, Text } from "react-native-paper";
+import AddTask from "@/components/AddTask"; 
+import TareaCard from "@/components/TareaCard"; 
 
-import EditModal from "@/components/EditModal";
-import TareaCard from "@/components/TareaCard";
-import ViewModal from "@/components/ViewModal";
-
-import {
-  deleteTarea,
-  getTareas,
-  type Tarea,
-} from "@/services/taskService";
+const url = "http://localhost:3000/tasks/"; 
 
 export default function Index() {
-  // --- Estado de datos ---
-  const [tareas, setTareas] = useState<Tarea[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [tareas, setTareas] = useState([]);
 
-  // --- Lógica de modales ---
-  const [isVisibleView, setIsVisibleView] = useState(false);
-  const [isVisibleEdit, setIsVisibleEdit] = useState(false);
-  const [selectedId, setSelectedId] = useState<number>(0);
-
-  const updateStateView = (id?: number) => {
-    if (id) setSelectedId(id);
-    setIsVisibleView((prev) => !prev);
-  };
-
-  const updateStateEdit = (id?: number) => {
-    if (id) setSelectedId(id);
-    setIsVisibleEdit((prev) => !prev);
-  };
-
-  // --- Cargar tareas desde la API ---
-  const fetchTareas = useCallback(async () => {
+  const fetchTasks = async () => {
     try {
-      setLoading(true);
-      setError(null);
-      const data = await getTareas();
-      setTareas(data);
-    } catch (e: any) {
-      setError(e.message ?? "Error desconocido");
-    } finally {
-      setLoading(false);
+      const response = await fetch(url);
+      const result = await response.json();
+      setTareas(result.data);
+    } catch (error) {
+      console.error("Error al obtener tareas:", error);
     }
-  }, []);
+  };
 
   useEffect(() => {
-    fetchTareas();
-  }, [fetchTareas]);
+    fetchTasks();
+  }, []);
 
-  // --- Borrar tarea ---
- const handleDelete = async (id: number, nombre: string) => {
-  const confirmed = window.confirm(`¿Deseas eliminar "${nombre}"?`);
-  if (!confirmed) return;
-  try {
-    await deleteTarea(id);
-    setTareas((prev) => prev.filter((t) => t.id !== id));
-  } catch (e: any) {
-    window.alert(`Error al eliminar: ${e.message}`);
-  }
-};
-
-  // --- Refrescar lista después de editar ---
-  const handleEditClose = () => {
-    updateStateEdit();
-    fetchTareas(); // recargamos para ver los cambios
+  const toggleModal = () => {
+    setIsModalVisible(!isModalVisible);
+    fetchTasks(); 
   };
 
-  // --- Helpers de visualización ---
-  const getEstado = (completed: boolean) => (completed ? "Completado" : "Pendiente");
-
-  // --- Render ---
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.centered}>
-        <ActivityIndicator size="large" color="#7B61FF" />
-        <Text style={styles.loadingText}>Cargando tareas...</Text>
-      </SafeAreaView>
-    );
-  }
-
-  if (error) {
-    return (
-      <SafeAreaView style={styles.centered}>
-        <Text style={styles.errorText}>⚠️ {error}</Text>
-        <Text style={styles.retryText} onPress={fetchTareas}>
-          Reintentar
-        </Text>
-      </SafeAreaView>
-    );
-  }
-
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Modales */}
-      <ViewModal
-        id={selectedId}
-        isVisibleView={isVisibleView}
-        newState={() => updateStateView()}
-      />
-      <EditModal
-        id={selectedId}
-        isVisibleEdit={isVisibleEdit}
-        newState={handleEditClose}
-      />
+    <PaperProvider>
+      <View style={styles.container}>
+        <Text variant="headlineMedium" style={styles.title}>Mis Tareas</Text>
+        
+        <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+          {tareas?.map((item: any) => (
+            <TareaCard
+              key={item.id}
+              id={item.id.toString()}
+              nombre={item.title}
+              estado={item.estado || "Pendiente"}
+              onPressDelete={() => {
+                console.log("Borrar", item.id);
+              }}
+            />
+          ))}
+        </ScrollView>
 
-      <Text style={styles.title}>Mis Pendientes</Text>
+        <AddTask 
+          id={tareas.length + 1} 
+          isVisibleAdd={isModalVisible} 
+          createTask={toggleModal} 
+        />
 
-      <FlatList
-        data={tareas}
-        keyExtractor={(item) => String(item.id)}
-        contentContainerStyle={styles.list}
-        ListEmptyComponent={
-          <Text style={styles.emptyText}>No hay tareas todavía.</Text>
-        }
-        renderItem={({ item }) => (
-          <TareaCard
-            id={String(item.id)}
-            nombre={item.title}
-            estado={getEstado(item.completed)}
-            onPressView={() => updateStateView(item.id)}
-            onPressEdit={() => updateStateEdit(item.id)}
-            onPressDelete={() => handleDelete(item.id, item.title)}
-          />
-        )}
-      />
-    </SafeAreaView>
+        <FAB
+          icon="plus"
+          label="Nueva Tarea"
+          style={styles.fab}
+          onPress={() => setIsModalVisible(true)}
+        />
+      </View>
+    </PaperProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F5F7",
-    paddingTop: 40,
+    backgroundColor: "#f5f5f5",
   },
   title: {
-    fontSize: 28,
-    fontWeight: "700",
-    textAlign: "center",
-    marginBottom: 16,
-    color: "#111111",
-    letterSpacing: -0.5,
+    margin: 20,
+    fontWeight: "bold",
+    color: "#333",
   },
-  list: {
-    paddingBottom: 40,
-  },
-  centered: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5F5F7",
-    gap: 12,
-  },
-  loadingText: {
-    color: "#999",
-    fontSize: 15,
-  },
-  errorText: {
-    color: "#DC2626",
-    fontSize: 15,
-    textAlign: "center",
-    paddingHorizontal: 32,
-  },
-  retryText: {
-    color: "#7B61FF",
-    fontSize: 15,
-    fontWeight: "600",
-  },
-  emptyText: {
-    textAlign: "center",
-    color: "#BBBBBB",
-    marginTop: 60,
-    fontSize: 16,
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
   },
 });
