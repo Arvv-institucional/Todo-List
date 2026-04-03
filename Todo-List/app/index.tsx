@@ -16,6 +16,7 @@ export default function Index() {
       const response = await fetch(url);
       const result = await response.json();
       setTareas(result.data);
+      console.log("tareas de la base de datos",result.data)
     } catch (error) {
       console.error("Error al obtener tareas:", error);
     }
