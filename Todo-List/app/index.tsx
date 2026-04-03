@@ -6,6 +6,7 @@ import TareaCard from "@/components/TareaCard";
 
 const url = "http://localhost:3000/tasks/"; 
 
+
 export default function Index() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [tareas, setTareas] = useState([]);
@@ -23,6 +24,7 @@ export default function Index() {
   useEffect(() => {
     fetchTasks();
   }, []);
+
 
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
