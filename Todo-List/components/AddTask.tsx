@@ -72,7 +72,7 @@ export default function AddTask(props: ModalViewProps) {
         >
           <Text
             variant="headlineSmall"
-            style={{ marginBottom: 20, fontWeight: "bold" }}
+            style={{ marginBottom: 20, fontWeight: "bold", color: "#000000" }}
           >
             Crear tarea
           </Text>
