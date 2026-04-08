@@ -1,39 +1,89 @@
 import ViewModal from "@/components/ViewModal";
 import EditModal from "@/components/EditModal";
-import { useState } from "react";
-import { Text, View, Pressable } from "react-native";
+import TodoCard from "@/components/TodoCard";
+import { useState, useEffect } from "react";
+import { View, ScrollView, SafeAreaView } from "react-native";
+import { Searchbar, Text } from "react-native-paper";
+
+interface Task {
+  id: number
+  title: string
+  description: string
+  completed: boolean
+}
+
+const url = 'http://localhost:3000/tasks/';
 
 export default function Index() {
-  const [isVisibleView, setIsVisibleView] = useState(false)
+  const [allTasks, setAllTasks] = useState<Task[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [isVisibleView, setIsVisibleView] = useState(false);
+  const [isVisibleEdit, setIsVisibleEdit] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<number>(0);
 
-  const updateStateView =() =>{
-    setIsVisibleView(!isVisibleView)
-  }
+  const fetchAllTasks = async () => {
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      setAllTasks(data.data || []);
+    } catch (error) {
+      console.log("error al obtener tareas", error);
+    }
+  };
 
-  const [isVisibleEdit, setIsVisibleEdit] = useState(false)
+  useEffect(() => {
+    fetchAllTasks();
+  }, []);
 
-  const updateStateEdit =() =>{
-    setIsVisibleEdit(!isVisibleEdit)
-  }
+  const filteredTasks = searchQuery === '' 
+    ? allTasks 
+    : allTasks.filter(task => {
+        const title = task.title ? task.title.toLowerCase() : '';
+        const query = searchQuery.toLowerCase();
+        return title.includes(query);
+      });
 
   return (
-    /*Esta parte del codigo posiblemente se tenga que mover a donde se haga el componente de las tarjetas*/
-    <View>
-      <ViewModal id={2} isVisibleView={isVisibleView} newState={updateStateView}/>
-      <EditModal id={2} isVisibleEdit={isVisibleEdit} newState={updateStateEdit}/>
-      <Text>Edit app/index.tsx to edit this screen.</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
+      <ViewModal id={selectedTaskId} isVisibleView={isVisibleView} newState={() => setIsVisibleView(!isVisibleView)} />
+      <EditModal id={selectedTaskId} isVisibleEdit={isVisibleEdit} newState={() => {
+        setIsVisibleEdit(!isVisibleEdit);
+        fetchAllTasks();
+      }} />
       
-      <Pressable onPress={updateStateView}>
-        <Text>
-          Boton para ver
-        </Text>
-      </Pressable>
+      <View style={{ padding: 15, backgroundColor: '#fff' }}>
+        <Searchbar
+          placeholder="Buscar tareas..."
+          onChangeText={setSearchQuery}
+          value={searchQuery}
+        />
+      </View>
 
-      <Pressable onPress={updateStateEdit}>
-        <Text>
-          Boton para editar
-        </Text>
-      </Pressable>
-    </View>
+      <ScrollView style={{ flex: 1, paddingTop: 15 }}>
+        {filteredTasks.length > 0 ? (
+          filteredTasks.map((task) => (
+            <TodoCard
+              key={task.id}
+              id={task.id}
+              onEditPress={() => {
+                setSelectedTaskId(task.id);
+                setIsVisibleEdit(true);
+              }}
+              onViewPress={() => {
+                setSelectedTaskId(task.id);
+                setIsVisibleView(true);
+              }}
+              onRefresh={fetchAllTasks}
+            />
+          ))
+        ) : (
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+            <Text variant="headlineSmall" style={{ color: '#999' }}>
+              {searchQuery === '' ? 'No hay tareas' : 'No se encontraron tareas'}
+            </Text>
+          </View>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
