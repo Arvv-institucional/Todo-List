@@ -8,13 +8,15 @@ interface Task {
   "completed": boolean
 }
 
+import { API_URL } from "@/config/api";
+
 interface ModalViewProps {
   id:number, 
   isVisibleView: boolean,
   newState: () => void
 }
 
-const url = "http://localhost:3000/tasks/"
+const url = `${API_URL}/tasks/`
 
 export default function ViewModal(props: ModalViewProps) {
 
@@ -49,36 +51,37 @@ export default function ViewModal(props: ModalViewProps) {
       contentContainerStyle={{ padding: 20 }}
     >
       <Surface style={{ padding: 20, borderRadius: 12, backgroundColor: 'white' }} elevation={5}>
-        <Text variant="headlineSmall" style={{ fontWeight: 'bold', marginBottom: 10 }}>
+        <Text variant="headlineSmall" style={{ fontWeight: 'bold', marginBottom: 12, color: '#1a1a1a' }}>
           {task?.title}
         </Text>
         
-        <Divider style={{ marginBottom: 15 }} />
+        <Divider style={{ marginBottom: 16 }} />
 
-        <Text variant="bodyMedium" style={{ color: 'gray', marginBottom: 5 }}>
+        <Text variant="bodyMedium" style={{ color: '#666', marginBottom: 6, fontWeight: '500' }}>
           Descripción:
         </Text>
-        <Text variant="bodyLarge" style={{ marginBottom: 20 }}>
+        <Text variant="bodyLarge" style={{ marginBottom: 20, color: '#333' }}>
           {task?.description}
         </Text>
 
-        <Divider style={{ marginBottom: 15 }} />
+        <Divider style={{ marginBottom: 16 }} />
 
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 25 }}>
-          <Text variant="bodyMedium" style={{ marginRight: 10 }}>Estado:</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 24 }}>
+          <Text variant="bodyMedium" style={{ marginRight: 12, fontWeight: '500', color: '#666' }}>Estado:</Text>
           <Chip 
             icon={task?.completed ? "check-circle" : "clock-outline"}
-            selectedColor={task?.completed ? "green" : "orange"}
-            style={{ backgroundColor: task?.completed ? "#c6fbca" : "#fee6bf" }}
+            selectedColor={task?.completed ? "#27ae60" : "#f39c12"}
+            style={{ backgroundColor: task?.completed ? "#d5f4e6" : "#fef5e7" }}
           >
-            {task?.completed ? "Completada" : "En Proceso..."}
+            {task?.completed ? "Completada" : "En Proceso"}
           </Chip>
         </View>
 
         <View style={{ alignItems: 'flex-end' }}>
           <Button  
-          mode="contained"
+            mode="contained"
             onPress={props.newState}
+            buttonColor="#5DADE2"
           >
             Cerrar
           </Button>

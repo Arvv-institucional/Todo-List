@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState} from "react";
 import {View} from "react-native"
 import { Modal, Portal, TextInput, Button, Text, Surface } from 'react-native-paper';
 
@@ -10,54 +10,24 @@ interface Task {
 
 import { API_URL } from "@/config/api";
 
-interface ModalViewProps {
-  id : number
-  isVisibleEdit: boolean
+interface ModalCreateProps {
+  isVisibleCreate: boolean
   newState : () => void
+  onTaskCreated: () => void
 }
 
 const url = `${API_URL}/tasks/`
 
-export default function EditModal(props: ModalViewProps) {
+export default function CreateModal(props: ModalCreateProps) {
   
-  const [task, setTask] = useState< Task | null >(null)
   const [newTitle, setNewTitle] = useState<string>('')
   const [newDescription, setNewDescription] = useState<string>('')
 
-  
-    const fetchTask = async () => {
-    try {
-      const response = await fetch(url+props.id)
-      const data = await response.json()
-      const wantedTask : Task = data.data
-      setTask(wantedTask)
-    } catch (error) {
-    console.log(error)
-    const wantedTaskError : Task = {
-      "title": "Tarea no disponible",
-      "description": "Ha habido un problema en la tarea intentelo mas tarde",
-      "completed": false
-    }
-    setTask(wantedTaskError)
-  }
-}
-
-  useEffect(()=>{
-    fetchTask()
-  }, [props.id])
-
-  useEffect(()=>{
-    if (task) {
-      setNewTitle(task.title)
-      setNewDescription(task.description)
-    }
-  }, [task])
-
-  function editTaskOnPress(){
-    const editTask = async ()=>{
+  function createTaskOnPress(){
+    const createTask = async ()=>{
       try {
-            const response = await fetch(url+props.id, {
-              method: "PUT",
+            const response = await fetch(url, {
+              method: "POST",
               headers: {
                 'Content-Type': 'application/json'
               },
@@ -65,34 +35,35 @@ export default function EditModal(props: ModalViewProps) {
             })
             const data = await response.json()
             console.log("success")
+            setNewTitle('')
+            setNewDescription('')
+            props.onTaskCreated()
             props.newState()
       } catch (error) {
-        console.log("error al editar", error)
+        console.log("error al crear", error)
         props.newState()
       }
     }
-  editTask()
+  createTask()
   }
-  
-
 
   return(
   <Portal> 
     <Modal 
-      visible={props.isVisibleEdit} 
+      visible={props.isVisibleCreate} 
       onDismiss={props.newState} 
       contentContainerStyle={{ padding: 20 }}
     >
       <Surface style={{ padding: 20, borderRadius: 12, backgroundColor: 'white' }} elevation={5}>
         <Text variant="headlineSmall" style={{ marginBottom: 20, fontWeight: 'bold', color: '#1a1a1a' }}>
-          Editar Tarea
+          Crear Nueva Tarea
         </Text>
 
         <TextInput
           label="Título"
           mode="outlined"
           contentStyle={{ paddingHorizontal: 10 }}
-          placeholder={task?.title}
+          placeholder="Ingrese el título"
           value={newTitle}
           onChangeText={setNewTitle}
           style={{height: 50, marginBottom: 16, backgroundColor: 'white' }}
@@ -102,7 +73,7 @@ export default function EditModal(props: ModalViewProps) {
           label="Descripción"
           mode="outlined"
           contentStyle={{ paddingHorizontal: 10 }}
-          placeholder={task?.description}
+          placeholder="Ingrese la descripción"
           value={newDescription}
           onChangeText={setNewDescription}
           multiline
@@ -121,11 +92,11 @@ export default function EditModal(props: ModalViewProps) {
           
           <Button 
             mode="contained" 
-            onPress={editTaskOnPress}
-            icon="content-save"
+            onPress={createTaskOnPress}
+            icon="plus"
             buttonColor="#5DADE2"
           >
-            Guardar
+            Crear
           </Button>
         </View>
       </Surface>

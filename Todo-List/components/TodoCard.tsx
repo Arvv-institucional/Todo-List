@@ -8,6 +8,8 @@ interface Task {
   'completed': boolean
 }
 
+import { API_URL } from "@/config/api";
+
 interface TodoCardProps {
   id: number
   onEditPress: () => void
@@ -15,7 +17,7 @@ interface TodoCardProps {
   onRefresh: () => void
 }
 
-const url = 'http://localhost:3000/tasks/';
+const url = `${API_URL}/tasks/`;
 
 export default function TodoCard(props: TodoCardProps) {
   const [task, setTask] = useState<Task | null>(null);
@@ -91,34 +93,38 @@ export default function TodoCard(props: TodoCardProps) {
   }
 
   return (
-    <Card style={{ marginHorizontal: 10, marginBottom: 10 }}>
+    <Card style={{ marginHorizontal: 12, marginBottom: 12, backgroundColor: '#fff' }}>
       <Card.Content>
-        <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: 12 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: 16 }}>
           <Checkbox
             status={isCompleted ? 'checked' : 'unchecked'}
             onPress={toggleCompleted}
+            color="#5DADE2"
           />
           <View style={{ flex: 1, marginLeft: 12 }}>
             <Text
               variant="titleMedium"
               style={{
-                fontWeight: 'bold',
+                fontWeight: '600',
                 textDecorationLine: isCompleted ? 'line-through' : 'none',
-                color: isCompleted ? '#999' : '#000'
+                color: isCompleted ? '#999' : '#1a1a1a'
               }}
             >
               {task?.title}
             </Text>
-            <Text variant="labelSmall" style={{ color: '#888', marginTop: 4 }}>
+            <Text variant="labelSmall" style={{ color: '#aaa', marginTop: 6, fontSize: 12 }}>
               ID: {props.id}
             </Text>
           </View>
         </View>
 
-        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 8, marginTop: 12 }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 8, marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: '#f0f0f0' }}>
           <Button
             mode="outlined"
             onPress={props.onViewPress}
+            size="small"
+            style={{ borderColor: '#5DADE2' }}
+            textColor="#5DADE2"
           >
             Ver
           </Button>
@@ -126,15 +132,19 @@ export default function TodoCard(props: TodoCardProps) {
           <Button
             mode="outlined"
             onPress={props.onEditPress}
+            size="small"
+            style={{ borderColor: '#17a2b8' }}
+            textColor="#17a2b8"
           >
             Editar
           </Button>
 
           <IconButton
             icon="delete"
-            iconColor="#d32f2f"
-            size={20}
+            iconColor="#dc3545"
+            size={22}
             onPress={deleteTask}
+            style={{ margin: 0 }}
           />
         </View>
       </Card.Content>
