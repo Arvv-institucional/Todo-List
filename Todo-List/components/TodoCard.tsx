@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { View } from "react-native";
-import { Card, Text, Button, Checkbox, IconButton } from 'react-native-paper';
+import { Card, Text, Button, Checkbox, IconButton } from "react-native-paper";
 
 interface Task {
-  'title': string
-  'description': string
-  'completed': boolean
+  title: string;
+  description: string;
+  completed: boolean;
 }
 
 import { API_URL } from "@/config/api";
 
 interface TodoCardProps {
-  id: number
-  onEditPress: () => void
-  onViewPress: () => void
-  onRefresh: () => void
+  id: number;
+  onEditPress: () => void;
+  onViewPress: () => void;
+  onRefresh: () => void;
 }
 
 const url = `${API_URL}/tasks/`;
@@ -35,9 +35,9 @@ export default function TodoCard(props: TodoCardProps) {
     } catch (error) {
       console.log(error);
       const wantedTaskError: Task = {
-        "title": "Tarea no disponible",
-        "description": "Ha habido un problema en la tarea intentelo mas tarde",
-        "completed": false
+        title: "Tarea no disponible",
+        description: "Ha habido un problema en la tarea intentelo mas tarde",
+        completed: false,
       };
       setTask(wantedTaskError);
       setLoading(false);
@@ -53,13 +53,13 @@ export default function TodoCard(props: TodoCardProps) {
       await fetch(url + props.id, {
         method: "PUT",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          'title': task?.title,
-          'description': task?.description,
-          'completed': !isCompleted
-        })
+          title: task?.title,
+          description: task?.description,
+          completed: !isCompleted,
+        }),
       });
       setIsCompleted(!isCompleted);
     } catch (error) {
@@ -72,8 +72,8 @@ export default function TodoCard(props: TodoCardProps) {
       await fetch(url + props.id, {
         method: "DELETE",
         headers: {
-          'Content-Type': 'application/json'
-        }
+          "Content-Type": "application/json",
+        },
       });
       console.log("tarea eliminada");
       props.onRefresh();
@@ -93,11 +93,23 @@ export default function TodoCard(props: TodoCardProps) {
   }
 
   return (
-    <Card style={{ marginHorizontal: 12, marginBottom: 12, backgroundColor: '#fff' }}>
+    <Card
+      style={{
+        marginHorizontal: 12,
+        marginBottom: 12,
+        backgroundColor: "#fff",
+      }}
+    >
       <Card.Content>
-        <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: 16 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "flex-start",
+            marginBottom: 16,
+          }}
+        >
           <Checkbox
-            status={isCompleted ? 'checked' : 'unchecked'}
+            status={isCompleted ? "checked" : "unchecked"}
             onPress={toggleCompleted}
             color="#5DADE2"
           />
@@ -105,25 +117,38 @@ export default function TodoCard(props: TodoCardProps) {
             <Text
               variant="titleMedium"
               style={{
-                fontWeight: '600',
-                textDecorationLine: isCompleted ? 'line-through' : 'none',
-                color: isCompleted ? '#999' : '#1a1a1a'
+                fontWeight: "600",
+                textDecorationLine: isCompleted ? "line-through" : "none",
+                color: isCompleted ? "#999" : "#1a1a1a",
               }}
             >
               {task?.title}
             </Text>
-            <Text variant="labelSmall" style={{ color: '#aaa', marginTop: 6, fontSize: 12 }}>
+            <Text
+              variant="labelSmall"
+              style={{ color: "#aaa", marginTop: 6, fontSize: 12 }}
+            >
               ID: {props.id}
             </Text>
           </View>
         </View>
 
-        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', gap: 8, marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: '#f0f0f0' }}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            gap: 8,
+            marginTop: 12,
+            paddingTop: 12,
+            borderTopWidth: 1,
+            borderTopColor: "#f0f0f0",
+          }}
+        >
           <Button
             mode="outlined"
             onPress={props.onViewPress}
             size="small"
-            style={{ borderColor: '#5DADE2' }}
+            style={{ borderColor: "#5DADE2" }}
             textColor="#5DADE2"
           >
             Ver
@@ -133,7 +158,7 @@ export default function TodoCard(props: TodoCardProps) {
             mode="outlined"
             onPress={props.onEditPress}
             size="small"
-            style={{ borderColor: '#17a2b8' }}
+            style={{ borderColor: "#17a2b8" }}
             textColor="#17a2b8"
           >
             Editar

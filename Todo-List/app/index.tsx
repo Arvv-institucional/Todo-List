@@ -8,17 +8,17 @@ import { Searchbar, Text, Button } from "react-native-paper";
 import { API_URL } from "@/config/api";
 
 interface Task {
-  id: number
-  title: string
-  description: string
-  completed: boolean
+  id: number;
+  title: string;
+  description: string;
+  completed: boolean;
 }
 
 const url = `${API_URL}/tasks/`;
 
 export default function Index() {
   const [allTasks, setAllTasks] = useState<Task[]>([]);
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [isVisibleView, setIsVisibleView] = useState(false);
   const [isVisibleEdit, setIsVisibleEdit] = useState(false);
   const [isVisibleCreate, setIsVisibleCreate] = useState(false);
@@ -38,25 +38,53 @@ export default function Index() {
     fetchAllTasks();
   }, []);
 
-  const filteredTasks = searchQuery === '' 
-    ? allTasks 
-    : allTasks.filter(task => {
-        const title = task.title ? task.title.toLowerCase() : '';
-        const query = searchQuery.toLowerCase();
-        return title.includes(query);
-      });
+  const filteredTasks =
+    searchQuery === ""
+      ? allTasks
+      : allTasks.filter((task) => {
+          const title = task.title ? task.title.toLowerCase() : "";
+          const query = searchQuery.toLowerCase();
+          return title.includes(query);
+        });
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#f8f9fa' }}>
-      <ViewModal id={selectedTaskId} isVisibleView={isVisibleView} newState={() => setIsVisibleView(!isVisibleView)} />
-      <EditModal id={selectedTaskId} isVisibleEdit={isVisibleEdit} newState={() => {
-        setIsVisibleEdit(!isVisibleEdit);
-        fetchAllTasks();
-      }} />
-      <CreateModal isVisibleCreate={isVisibleCreate} newState={() => setIsVisibleCreate(!isVisibleCreate)} onTaskCreated={fetchAllTasks} />
-      
-      <View style={{ padding: 16, paddingBottom: 12, backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#e0e0e0' }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#f8f9fa" }}>
+      <ViewModal
+        id={selectedTaskId}
+        isVisibleView={isVisibleView}
+        newState={() => setIsVisibleView(!isVisibleView)}
+      />
+      <EditModal
+        id={selectedTaskId}
+        isVisibleEdit={isVisibleEdit}
+        newState={() => {
+          setIsVisibleEdit(!isVisibleEdit);
+          fetchAllTasks();
+        }}
+      />
+      <CreateModal
+        isVisibleCreate={isVisibleCreate}
+        newState={() => setIsVisibleCreate(!isVisibleCreate)}
+        onTaskCreated={fetchAllTasks}
+      />
+
+      <View
+        style={{
+          padding: 16,
+          paddingBottom: 12,
+          backgroundColor: "#fff",
+          borderBottomWidth: 1,
+          borderBottomColor: "#e0e0e0",
+        }}
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 12,
+            marginBottom: 12,
+          }}
+        >
           <Searchbar
             placeholder="Buscar tareas..."
             onChangeText={setSearchQuery}
@@ -68,7 +96,7 @@ export default function Index() {
             mode="contained"
             icon="plus"
             onPress={() => setIsVisibleCreate(true)}
-            style={{ height: 45, justifyContent: 'center' }}
+            style={{ height: 45, justifyContent: "center" }}
             buttonColor="#5DADE2"
           >
             Crear
@@ -94,9 +122,21 @@ export default function Index() {
             />
           ))
         ) : (
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
-            <Text variant="headlineSmall" style={{ color: '#bbb', fontWeight: '500' }}>
-              {searchQuery === '' ? 'No hay tareas' : 'No se encontraron tareas'}
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              padding: 20,
+            }}
+          >
+            <Text
+              variant="headlineSmall"
+              style={{ color: "#bbb", fontWeight: "500" }}
+            >
+              {searchQuery === ""
+                ? "No hay tareas"
+                : "No se encontraron tareas"}
             </Text>
           </View>
         )}
