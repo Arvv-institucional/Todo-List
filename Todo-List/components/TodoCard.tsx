@@ -15,6 +15,7 @@ interface TodoCardProps {
   onEditPress: () => void;
   onViewPress: () => void;
   onRefresh: () => void;
+  isVisibleEdit: () => void;
 }
 
 const url = `${API_URL}/tasks/`;
@@ -46,7 +47,7 @@ export default function TodoCard(props: TodoCardProps) {
 
   useEffect(() => {
     fetchTask();
-  }, [props.id]);
+  }, [props.id, props.isVisibleEdit]);
 
   const toggleCompleted = async () => {
     try {

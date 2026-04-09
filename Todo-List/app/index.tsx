@@ -110,6 +110,7 @@ export default function Index() {
             <TodoCard
               key={task.id}
               id={task.id}
+              isVisibleEdit={isVisibleEdit}
               onEditPress={() => {
                 setSelectedTaskId(task.id);
                 setIsVisibleEdit(true);
