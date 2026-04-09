@@ -15,7 +15,7 @@ interface TodoCardProps {
   onEditPress: () => void;
   onViewPress: () => void;
   onRefresh: () => void;
-  isVisibleEdit: () => void;
+  isVisibleEdit: Boolean;
 }
 
 const url = `${API_URL}/tasks/`;
